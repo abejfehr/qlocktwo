@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Qlocktwo</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        display: grid;
+        place-items: center;
+      }
+      .qlocktwo {
+        box-sizing: border-box;
+        font-family: sans-serif;
+        text-transform: full-width;
+        background-color: black;
+        color: rgb(50, 50, 50);
+        font-weight: bold;
+        font-size: 3.2vmin;
+        letter-spacing: 0.6em;
+        line-height: 1.75;
+        padding: 11.5vmin;
+        width: 80vmin;
+        height: 80vmin;
+        box-shadow: 0 0 3em rgba(0, 0, 0, 0.5);
+      }
+      .qlocktwo span {
+        transition: none;
+      }
+      .qlocktwo span.lit {
+        transition: color 0.3s ease-out, text-shadow 0.5s ease-out;
+      }
+      .lit {
+        color: white;
+        text-shadow: 0 0 5px white;
+      }
+      .o {
+        position: relative;
+      }
+      .o::after {
+        content: "'";
+        position: absolute;
+        top: -0.5em;
+        right: -0.5em;
+      }
+
+      .debug {
+        display: none;
+      }
+      .development .debug {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="qlocktwo">
+      <div><span class="it">IT</span>L<span class="is">IS</span>ASAMPM</div>
+      <div><span class="a">A</span>C<span class="quarter">QUARTER</span>DC</div>
+      <div>
+        <span class="twentyfive"
+          ><span class="twenty">TWENTY</span
+          ><span class="five">FIVE</span></span
+        >X
+      </div>
+      <div>
+        <span class="half">HALF</span>S<span class="ten">TEN</span>F<span
+          class="to"
+          >TO</span
+        >
+      </div>
+      <div><span class="past">PAST</span>ERU<span class="nine">NINE</span></div>
+      <div>
+        <span class="one">ONE</span><span class="six">SIX</span
+        ><span class="three">THREE</span>
+      </div>
+      <div>
+        <span class="four">FOUR</span><span class="fiveh">FIVE</span
+        ><span class="two">TWO</span>
+      </div>
+      <div>
+        <span class="eight">EIGHT</span><span class="eleven">ELEVEN</span>
+      </div>
+      <div>
+        <span class="seven">SEVEN</span><span class="twelve">TWELVE</span>
+      </div>
+      <div>
+        <span class="tenh">TEN</span>SE<span class="o">O</span
+        ><span class="clock">CLOCK</span>
+      </div>
+    </div>
+    <div class="debug">
+      <input class="hour picker" type="number" min="0" max="23" />
+      <input class="minute picker" type="number" min="1" max="59" />
+    </div>
+    <script>
+      const lightUp = (words) => {
+        words.split(" ").forEach((word) => {
+          document.querySelector(`.${word}`).classList.add("lit");
+        });
+      };
+
+      const renderTime = (time) => {
+        let hours = time.getHours();
+        const minutes = time.getMinutes();
+
+        // Unlight everything
+        document
+          .querySelectorAll("span")
+          .forEach((span) => span.classList.remove("lit"));
+
+        // Always light up "it is"
+        document
+          .querySelectorAll(".it,.is")
+          .forEach((text) => text.classList.add("lit"));
+
+        if (minutes >= 55) {
+          lightUp("five to");
+          hours++;
+        } else if (minutes >= 50) {
+          lightUp("ten to");
+          hours++;
+        } else if (minutes >= 45) {
+          lightUp("a quarter to");
+          hours++;
+        } else if (minutes >= 40) {
+          lightUp("twenty to");
+          hours++;
+        } else if (minutes >= 35) {
+          lightUp("twentyfive to");
+          hours++;
+        } else if (minutes >= 30) {
+          lightUp("half past");
+        } else if (minutes >= 25) {
+          lightUp("twentyfive past");
+        } else if (minutes >= 15) {
+          lightUp("a quarter past");
+        } else if (minutes >= 10) {
+          lightUp("ten past");
+        } else if (minutes >= 5) {
+          lightUp("five past");
+        } else {
+          lightUp("o clock");
+        }
+
+        if (hours % 12 === 1) {
+          lightUp("one");
+        }
+        if (hours % 12 === 2) {
+          lightUp("two");
+        }
+        if (hours % 12 === 3) {
+          lightUp("three");
+        }
+        if (hours % 12 === 4) {
+          lightUp("four");
+        }
+        if (hours % 12 === 5) {
+          lightUp("fiveh");
+        }
+        if (hours % 12 === 6) {
+          lightUp("six");
+        }
+        if (hours % 12 === 7) {
+          lightUp("seven");
+        }
+        if (hours % 12 === 8) {
+          lightUp("eight");
+        }
+        if (hours % 12 === 9) {
+          lightUp("nine");
+        }
+        if (hours % 12 === 10) {
+          lightUp("tenh");
+        }
+        if (hours % 12 === 11) {
+          lightUp("eleven");
+        }
+        if (hours % 12 === 0) {
+          lightUp("twelve");
+        }
+      };
+
+      const interval = setInterval(() => {
+        const now = new Date();
+        renderTime(now);
+      }, 1000);
+
+      const now = new Date();
+      renderTime(now);
+
+      document.querySelector(".hour.picker").addEventListener("input", (e) => {
+        clearInterval(interval);
+
+        now.setHours(e.target.value);
+
+        renderTime(now);
+      });
+      document
+        .querySelector(".minute.picker")
+        .addEventListener("input", (e) => {
+          clearInterval(interval);
+
+          now.setMinutes(e.target.value);
+
+          renderTime(now);
+        });
+    </script>
+  </body>
+</html>
